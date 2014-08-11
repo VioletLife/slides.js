@@ -1,0 +1,26 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700);
+
+html {
+  font-size: 26px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.slide {
+  /*max-width: 1000px;*/
+  /*min-width: 600px;*/
+  padding: 0;
+  /*border: 1px solid #ddd;*/
+}
+
+.fragment {
+  color: #ccc;
+  transition: all 0.3s;
+}
+
+.fragment-visible {
+  color: inherit;
+}
