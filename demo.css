@@ -3,6 +3,17 @@
 html {
   font-size: 26px;
   font-family: 'Open Sans', sans-serif;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+* {
+  /*backface-visibility: hidden;*/
+  /*transform: translateZ(0);*/
+  /*background-color: white;*/
 }
 
 h1 {
@@ -17,10 +28,20 @@ h1 {
 }
 
 .fragment {
-  color: #ccc;
-  transition: all 0.3s;
+  transition: opacity 0.3s;
+  /*backface-visibility: hidden;*/
 }
 
-.fragment-visible {
+.fragment.shaded {
+  /*color: #ccc;*/
+  opacity: 0.2;
+}
+
+.fragment.invisible, .fragment .invisible {
+  opacity: 0;
+}
+
+.fragment.visible, .fragment.visible :not(.fragment).invisible {
   color: inherit;
+  opacity: 1;
 }

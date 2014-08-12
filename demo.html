@@ -8,6 +8,23 @@
   <link rel="stylesheet" href="presenter.css">
   <link rel="stylesheet" href="demo.css">
   <script src="libs/jquery.min.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      messageStyle: "none",
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+      },
+      "HTML-CSS": { availableFonts: ["TeX"] }
+    });
+    MathJax.Hub.Queue(function () {
+      api.normalize();
+    });
+  </script>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   <script src="presenter.js"></script>
 </head>
 
@@ -15,6 +32,7 @@
 
   <div class="slide">
     <h1>presenter.js</h1>
+    <p>$$\int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}$$</p>
   </div>
 
   <div class="slide">
@@ -34,9 +52,9 @@
   <div class="slide" id="foo">
     <h1>Some stuff</h1>
     <ul>
-      <li class="fragment">One</li>
-      <div class="fragment">
-        <li>Two</li>
+      <li class="fragment shaded">One <span class="fragment invisible">$\alpha$</span></li>
+      <div class="fragment shaded">
+        <li>Two <span class="invisible">$\beta$</span></li>
         <li>Three</li>
         <li>Four</li>
         <li>Five</li>
