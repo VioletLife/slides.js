@@ -43,7 +43,7 @@ h1 {
 .status {
   font-size: 20px;
   position: fixed;
-  bottom: -4px;
-  right: 2px;
+  bottom: -3px;
+  right: 1px;
   color: #aaa;
 }
