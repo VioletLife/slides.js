@@ -12,8 +12,12 @@ var api = {
   root: null,
   slides: null,
   currentSlideNumber: null,
+  currentSlide: null,
+  currentFragmentNumber: null,
+  numberOfFragmentsInCurrentSlide: null,
   events: {
-    slideChange: []
+    slideChange: [],
+    fragmentChange: [] // not triggered on slideChange
   },
   on: function(eventName, eventCallback) {
     if (this.events.hasOwnProperty(eventName)) {
@@ -30,12 +34,22 @@ var api = {
   prev: function() {
     // Reveal previous fragment or go to next slide.
     var lastVisibleFragment = this.currentSlide.find('.fragment.visible').last().removeClass('visible');
-    if (!lastVisibleFragment.length) this.goToSlide(this.currentSlideNumber - 1);
+    if (!lastVisibleFragment.length) {
+      this.goToSlide(this.currentSlideNumber - 1);
+    } else {
+      this.currentFragmentNumber = this.currentSlide.find('.fragment.visible').length;
+      this.trigger('fragmentChange');
+    }
   },
   next: function() {
     // Reveal next fragment or go to next slide.
     var firstHiddenFragment = this.currentSlide.find('.fragment:not(.visible)').first().addClass('visible');
-    if (!firstHiddenFragment.length) this.goToSlide(this.currentSlideNumber + 1);
+    if (!firstHiddenFragment.length) {
+      this.goToSlide(this.currentSlideNumber + 1);
+    } else {
+      this.currentFragmentNumber = this.currentSlide.find('.fragment.visible').length;
+      this.trigger('fragmentChange');
+    }
   },
   goToSlide: function(n) {
     // Do not go past last slide.
@@ -45,12 +59,11 @@ var api = {
     if (n === this.currentSlideNumber) return;
     this.currentSlideNumber = window.location.hash = n;
     if (this.currentSlide) this.currentSlide.removeClass('active');
-    this.currentSlide = this.getSlide(n).addClass('active');
+    this.currentSlide = this.slides.filter('[data-slide-number="' + n + '"]').addClass('active');
     this.normalize();
+    this.currentFragmentNumber = this.currentSlide.find('.fragment.visible').length;
+    this.numberOfFragmentsInCurrentSlide = this.currentSlide.find('.fragment').length;
     this.trigger('slideChange');
-  },
-  getSlide: function(n) {
-    return this.slides.filter('[data-slide-number="' + n + '"]');
   },
   normalize: function() {
     // Recalculate current slides scaling and position to fit viewport dimensions.
@@ -64,73 +77,75 @@ var api = {
     // Scaling leads to flickering and blur on opacity transition in webkit.
     // This can be compensated for by setting backface-visibility: hidden;
     // Although, this gives constant blur.
-    if (this.config.scaling === 'superfit') {
-      this.currentSlide.css('transform', 'scale(' + scaleFactor + ')');
+    if (this.config.scaling === 'none') {
+      scaleFactor = 1;
     } else if (this.config.scaling === 'fit') {
-      this.currentSlide.css('transform', 'scale(' + (scaleFactor < 1 ? scaleFactor : 1) + ')');
+      scaleFactor = scaleFactor < 1 ? scaleFactor : 1;
     }
+    this.currentSlide.css('transform', 'scale(' + scaleFactor + ')');
     if (this.config.valign === 'top') {
-      this.currentSlide.css('top', 0);
+      this.currentSlide.css('top', this.currentSlide.outerHeight()*(scaleFactor-1)/2);
     } else if (this.config.valign === 'center') {
       this.currentSlide.css('top', Math.floor((this.root.height() - this.currentSlide.outerHeight()) / 2));
-      // this.currentSlide.css('top', Math.floor(($(window).height() - this.currentSlide.outerHeight()) / 2));
     } else if (this.config.valign === 'bottom') {
-      this.currentSlide.css('bottom', 0);
+      this.currentSlide.css('bottom', this.currentSlide.outerHeight()*(scaleFactor-1)/2);
     }
     if (this.config.halign === 'left') {
-      this.currentSlide.css('left', 0);
+      this.currentSlide.css('left', this.currentSlide.outerWidth()*(scaleFactor-1)/2);
     } else if (this.config.halign === 'center') {
       this.currentSlide.css('left', Math.floor((this.root.width() - this.currentSlide.outerWidth()) / 2));
-      // this.currentSlide.css('left', Math.floor(($(window).width() - this.currentSlide.outerWidth()) / 2));
     } else if (this.config.halign === 'right') {
-      this.currentSlide.css('right', 0);
+      this.currentSlide.css('right', this.currentSlide.outerWidth()*(scaleFactor-1)/2);
     }
   },
-  init: function(config) {
+  init: function(config, callback) {
     if (config) {
       for (var key in config) {
         if (config.hasOwnProperty(key)) {
-          this.config = config[key];
+          this.config[key] = config[key];
         }
       }
     }
-    this.root = $(this.config.rootSelector);
-    this.slides = this.root.children('.slide');
-    this.slides.each(function(idx) {
-      $(this).attr('data-slide-number', idx+1);
-    });
-    var newSlideNumber = 1;
-    if (window.location.hash) {
-      newSlideNumber = parseInt(window.location.hash.substr(1));
-    }
-    this.goToSlide(newSlideNumber);
-    this.normalize();
-    setTimeout(this.normalize.bind(this), 100); // Useful if webfonts are loading slowly.
-    $(window).resize(this.normalize.bind(this));
-    $(window).on('hashchange', function() { this.goToSlide(parseInt(window.location.hash.substr(1))); }.bind(this));
-    $(window).keydown(function(e) {
-      switch(e.keyCode) {
-        case 33: // pg up
-        case 37: // left
-        case 38: // up
-          api.prev();
-          e.preventDefault();
-          break;
-        case 32: // space
-        case 34: // pg down
-        case 39: // right
-        case 40: // down
-          api.next();
-          e.preventDefault();
-          break;
-        case 67: // c
-          // toggle cursor
-          if ($('html').css('cursor') === 'none') {
-            $('html').css('cursor', 'url(http://blog.ginchen.de/wp-content/uploads/2009/08/gdlib-png/) 10 10, default');
-          } else {
-            $('html').css('cursor', 'none');
-          }
+    $(function() {
+      this.root = $(this.config.rootSelector);
+      this.slides = this.root.children('.slide');
+      this.slides.each(function(idx) {
+        $(this).attr('data-slide-number', idx+1);
+      });
+      var initialSlideNumber = 1;
+      if (window.location.hash) {
+        initialSlideNumber = parseInt(window.location.hash.substr(1));
       }
-    });
+      callback();
+      this.goToSlide(initialSlideNumber);
+      this.normalize();
+      setTimeout(this.normalize.bind(this), 100); // Useful if webfonts are loading slowly.
+      $(window).resize(this.normalize.bind(this));
+      $(window).on('hashchange', function() { this.goToSlide(parseInt(window.location.hash.substr(1))); }.bind(this));
+      $(window).keydown(function(e) {
+        switch(e.keyCode) {
+          case 33: // pg up
+          case 37: // left
+          case 38: // up
+            api.prev();
+            e.preventDefault();
+            break;
+          case 32: // space
+          case 34: // pg down
+          case 39: // right
+          case 40: // down
+            api.next();
+            e.preventDefault();
+            break;
+          case 67: // c
+            // toggle cursor
+            if ($('html').css('cursor') === 'none') {
+              $('html').css('cursor', 'url(http://blog.ginchen.de/wp-content/uploads/2009/08/gdlib-png/) 10 10, default');
+            } else {
+              $('html').css('cursor', 'none');
+            }
+        }
+      });
+    }.bind(this));
   }
 };

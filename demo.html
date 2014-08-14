@@ -27,13 +27,16 @@
   <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   <script src="presenter.js"></script>
   <script>
-  $(function() {
-    api.init();
+    api.init({}, function() {
       // Status "on slide n/m" in bottom right corner.
       $('.numberOfSlides').text(api.slides.length);
-      $('.currentSlideNumber').text(api.currentSlideNumber);
       api.on('slideChange', function() {
         $('.currentSlideNumber').text(api.currentSlideNumber);
+        $('.numberOfFragmentsInCurrentSlide').text(api.numberOfFragmentsInCurrentSlide);
+        $('.currentFragmentNumber').text(api.currentFragmentNumber);
+      });
+      api.on('fragmentChange', function() {
+        $('.currentFragmentNumber').text(api.currentFragmentNumber);
       });
     });
   </script>
@@ -143,6 +146,7 @@
   </div>
 
   <div class="status">
+    <span class="currentFragmentNumber"></span>/<span class="numberOfFragmentsInCurrentSlide"></span>
     <span class="currentSlideNumber"></span>/<span class="numberOfSlides"></span>
   </div>
 
