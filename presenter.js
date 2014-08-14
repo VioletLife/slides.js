@@ -3,8 +3,13 @@
 
 var api = {
   config: {
-    scaling: 'superfit'
+    rootSelector: '.slides', //
+    scaling: 'superfit',     // none, fit, superfit
+    valign: 'center',        // top, center, bottom
+    halign: 'center',        // left, center, right
+    transition: 'none'       // none
   },
+  root: null,
   slides: null,
   currentSlideNumber: null,
   events: {
@@ -50,10 +55,10 @@ var api = {
   normalize: function() {
     // Recalculate current slides scaling and position to fit viewport dimensions.
 
-    // var aspectRatio = $(window).width() / $(window).height();
+    // var aspectRatio = this.root.width() / this.root.height();
     // this.currentSlide.css('width', this.currentSlide.height() * aspectRatio);
-    var heightRatio = $(window).height() / this.currentSlide.outerHeight();
-    var widthRatio = $(window).width() / this.currentSlide.outerWidth();
+    var heightRatio = this.root.height() / this.currentSlide.outerHeight();
+    var widthRatio = this.root.width() / this.currentSlide.outerWidth();
     var scaleFactor = Math.min(heightRatio, widthRatio);
 
     // Scaling leads to flickering and blur on opacity transition in webkit.
@@ -64,15 +69,33 @@ var api = {
     } else if (this.config.scaling === 'fit') {
       this.currentSlide.css('transform', 'scale(' + (scaleFactor < 1 ? scaleFactor : 1) + ')');
     }
-    this.currentSlide.css({
-      top: Math.floor(($(window).height() - this.currentSlide.outerHeight()) / 2),
-      left: Math.floor(($(window).width() - this.currentSlide.outerWidth()) / 2),
-    });
+    if (this.config.valign === 'top') {
+      this.currentSlide.css('top', 0);
+    } else if (this.config.valign === 'center') {
+      this.currentSlide.css('top', Math.floor((this.root.height() - this.currentSlide.outerHeight()) / 2));
+      // this.currentSlide.css('top', Math.floor(($(window).height() - this.currentSlide.outerHeight()) / 2));
+    } else if (this.config.valign === 'bottom') {
+      this.currentSlide.css('bottom', 0);
+    }
+    if (this.config.halign === 'left') {
+      this.currentSlide.css('left', 0);
+    } else if (this.config.halign === 'center') {
+      this.currentSlide.css('left', Math.floor((this.root.width() - this.currentSlide.outerWidth()) / 2));
+      // this.currentSlide.css('left', Math.floor(($(window).width() - this.currentSlide.outerWidth()) / 2));
+    } else if (this.config.halign === 'right') {
+      this.currentSlide.css('right', 0);
+    }
   },
   init: function(config) {
-    config = config || {};
-    if (config.scaling) this.config.scaling = config.scaling;
-    this.slides = $(config.selector || '.slides').children('.slide');
+    if (config) {
+      for (var key in config) {
+        if (config.hasOwnProperty(key)) {
+          this.config = config[key];
+        }
+      }
+    }
+    this.root = $(this.config.rootSelector);
+    this.slides = this.root.children('.slide');
     this.slides.each(function(idx) {
       $(this).attr('data-slide-number', idx+1);
     });

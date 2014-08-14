@@ -15,6 +15,15 @@ h1 {
   text-align: center;
 }
 
+.slides {
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border: 1px solid #ccc;
+}
+
 .slide {
   /*max-width: 1000px;*/
   /*min-width: 600px;*/
