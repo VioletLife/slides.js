@@ -122,7 +122,7 @@ var api = {
       setTimeout(this.normalize.bind(this), 100); // Useful if webfonts are loading slowly.
       $(window).resize(this.normalize.bind(this));
       $(window).on('hashchange', function() { this.goToSlide(parseInt(window.location.hash.substr(1))); }.bind(this));
-      $(window).keydown(function(e) {
+      $(window).keydown(function(e) { // It would be nice to bind keydown to this.root, but this requires the element to be focusabe, and making it so is ugly.
         switch(e.keyCode) {
           case 33: // pg up
           case 37: // left
