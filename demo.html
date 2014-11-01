@@ -21,13 +21,13 @@
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
   MathJax.Hub.Queue(function () {
-    api.normalize();
+    api.recalculate();
   });
   </script>
   <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   <script src="presenter.js"></script>
   <script>
-    api.init({scaling: 'fit'}, function() {
+    api.init({}, function() {
       // Status "on slide n/m" in bottom right corner.
       $('.numberOfSlides').text(api.slides.length);
       api.on('slideChange', function() {
@@ -44,12 +44,9 @@
 
 <body>
 
-  <p>The presentation is just any element among other elements.</p>
-  <p><em>One restriction is that the <code>.slides</code> element must have <code>position: relative|absolute;</code>, so that the <code>.slide</code>s can be positioned correctly.</em></p>
-
   <div class="slides">
 
-    <div class="slide">
+    <div class="slide slide-scaling-superfit">
       <h1>presenter.js</h1>
       <p>$$\int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}$$</p>
     </div>
@@ -84,6 +81,18 @@
           <li>Ten</li>
         </div>
       </ul>
+    </div>
+
+    <div class="slide">
+      <h1>Ma$\theta$ematics h$\epsilon$a$\nu$y</h1>
+      <!-- wohoooo sdofjs odfj $\pi$ sodijfds of -->
+      Lets say we have $e^{\frac{2\pi}{M}i}$ and something like
+      $$
+        \begin{cases}
+          f(x_0) = f(x_1) \\
+          \sum \partial f(x) = 0
+        \end{cases}
+      $$
     </div>
 
     <div class="slide">
@@ -156,8 +165,6 @@
     </div>
 
   </div>
-
-  <p>Other text below.</p>
 
 </body>
 </html>

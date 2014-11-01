@@ -1,8 +1,12 @@
 /*@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700);*/
+/*@import url(http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700);*/
+/*@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic);*/
 
 html {
   font-size: 24px;
-  /*font-family: 'Open Sans', sans-serif;*/
+  font-family: 'Open Sans', sans-serif;
+  /*font-family: 'Vollkorn';*/
+  /*font-family: 'Droid serif';*/
 }
 
 * {
@@ -16,24 +20,28 @@ h1 {
 }
 
 .slides {
-/*  position: absolute;
-  top: 50px;
-  bottom: 20px;
-  left: 400px;
-  right: 200px;
-*/
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+/*  position: relative;
   height: 500px;
   width: 100%;
   border: 1px solid #ccc;
   z-index: 123;
-}
+*/}
 
 .slide {
   /*max-width: 1000px;*/
   /*min-width: 600px;*/
   padding: 0;
   /*border: 1px solid #ddd;*/
+}
+
+.slide p {
+  /*text-align: center;*/
 }
 
 .fragment {
@@ -57,8 +65,8 @@ h1 {
 .status {
   font-size: 20px;
   position: absolute;
-  bottom: -3px;
-  right: 1px;
+  bottom: 0;
+  right: 0;
   color: #aaa;
 }
 

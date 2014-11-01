@@ -4,11 +4,21 @@
           box-sizing: border-box;
 }
 
+.slides {
+  overflow-x: hidden;
+}
+
 .slide {
   position: absolute;
-  display: none;
+  /*border: 1px solid red;*/
+  /*display: none;*/
+  max-width: 800px;
 }
 
 .slide.active {
-  display: block;
+  /*display: block;*/
+}
+
+.MathJax_Display {
+  /*width: auto !important;*/
 }
