@@ -1,23 +1,17 @@
-/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700);*/
-/*@import url(http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700);*/
-/*@import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic);*/
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,500,700,400italic,500italic,700italic);
 
 html {
   font-size: 24px;
-  font-family: 'Open Sans', sans-serif;
-  /*font-family: 'Vollkorn';*/
-  /*font-family: 'Droid serif';*/
-}
-
-* {
-  /*backface-visibility: hidden;*/
-  /*transform: translateZ(0);*/
+  font-family: 'Ubuntu', sans-serif;
 }
 
 h1 {
-  font-size: 200%;
   text-align: center;
 }
+
+
+/* Position slide container
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .slides {
   position: absolute;
@@ -25,51 +19,53 @@ h1 {
   bottom: 0;
   left: 0;
   right: 0;
-
-/*  position: relative;
-  height: 500px;
-  width: 100%;
-  border: 1px solid #ccc;
-  z-index: 123;
-*/}
-
-.slide {
-  /*max-width: 1000px;*/
-  /*min-width: 600px;*/
-  padding: 0;
-  /*border: 1px solid #ddd;*/
 }
 
-.slide p {
-  /*text-align: center;*/
-}
+
+/* Fragments
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .fragment {
-  transition: all .2s;
-}
-
-.fragment.shaded {
-  /*color: #ccc;*/
-  opacity: 0.2;
-}
-
-.fragment.invisible, .fragment .invisible {
+  transition: opacity .5s;
   opacity: 0;
 }
 
-.fragment.visible, .fragment.visible :not(.fragment).invisible {
-  color: inherit;
+.fragment.visible {
   opacity: 1;
 }
 
-.status {
-  font-size: 20px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  color: #aaa;
+
+/* Print
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+@media print {
+
+  .slides, .slides>div  {
+    font-size: 12pt !important;
+    position: static !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    text-align: justify !important;
+    max-width: none !important;
+    width: auto !important;
+    transform: none !important;
+  }
+
+  .slides>div {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .status {
+    display: none !important;
+  }
+
 }
 
-code {
-  font-style: normal !important;
+@page {
+  size: auto;
+  font-size: 12pt;
+  margin: 2cm;
 }
+
