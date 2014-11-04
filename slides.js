@@ -3,6 +3,7 @@ var slides = {
   rootSelector: '.slides', // Where all slides elements (<div>s) are to be found.
   transitionDuration: 500, // Time in milliseconds for slide transition. Set to 0 for no fancy.
   maxWidth: 800, // Max width of each slide.
+  padding: 20, // px
   status: true, // Show/hide slide current slide (and fragment) number in bottom right corner.
   // Internal stuff.
   root: null,
@@ -93,7 +94,7 @@ var slides = {
     next.style.left = (this.root.clientWidth - next.clientWidth) / 2 + 'px';
   },
   initSlides: function() {
-    var width = Math.min(this.root.clientWidth, this.maxWidth);
+    var width = Math.min(this.root.clientWidth - this.padding, this.maxWidth);
     Array.prototype.forEach.call(this.slides, function(slide, idx) {
       var n = idx + 1;
       slide.style.position = 'absolute';
@@ -124,16 +125,18 @@ var slides = {
       }
     }.bind(this));
     window.addEventListener('keydown', function(e) { // It would be nice to bind keydown to this.root, but this requires the element to be focusabe, and making it so is ugly.
-      //           page up                left                   s                      shift + space
-      if (e.keyCode === 33 || e.keyCode === 37 || e.keyCode === 83 || (e.shiftKey && e.keyCode === 32)) {
+      //           page up                left                      shift + space
+      if (e.keyCode === 33 || e.keyCode === 37 || (e.shiftKey && e.keyCode === 32)) {
+        e.preventDefault();
         this.prev();
+      //                page down               right               space               enter
+      } else if (e.keyCode === 34 || e.keyCode === 39 || e.keyCode === 32 || e.keyCode === 13) {
         e.preventDefault();
-      //                page down               right                   f               space               enter
-      } else if (e.keyCode === 34 || e.keyCode === 39 || e.keyCode === 70 || e.keyCode === 32 || e.keyCode === 13) {
         this.next();
+      } else if (e.keyCode === 80) { // f
         e.preventDefault();
-      //                        c
-      } else if (e.keyCode === 67) {
+        this.goFullScreen();
+      } else if (e.keyCode === 67) { // c
         // if ($('html').css('cursor') === 'none') {
         //   $('html').css('cursor', 'url(http://blog.ginchen.de/wp-content/uploads/2009/08/gdlib-png/) 10 10, default');
         // } else {
@@ -141,7 +144,14 @@ var slides = {
         // }
       }
     }.bind(this));
-
+    this.root.addEventListener('touchstart', function(e) {
+      this.goFullScreen();
+      if (e.touches[0].pageX - this.root.offsetLeft > this.root.clientWidth / 2) {
+        this.next();
+      } else {
+        this.prev();
+      }
+    }.bind(this));
   },
   initStatus: function() {
     if (!this.status) return;
@@ -173,9 +183,26 @@ var slides = {
       fragmentStatus.textContent = this.currentFragmentNumber + '/' + this.numberOfFragmentsInCurrentSlide + ' ';
     });
   },
+  goFullScreen: function() {
+    var fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled;
+    var fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement || document.msFullscreenElement;
+    if (fullscreenEnabled && !fullscreenElement) {
+      var el = slides.root;
+      if (el.requestFullscreen) {
+        el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      } else if (el.mozRequestFullScreen) {
+        el.mozRequestFullScreen();
+      } else if (el.msRequestFullscreen) {
+        el.msRequestFullscreen();
+      }
+    }
+  },
   init: function(callback) {
     // Make sure that init can be called both before and after DOM has loaded.
-    var wrapper = function() {
+
+    var innerInit = function() {
       this.root = document.querySelector(this.rootSelector);
       this.root.style.overflow = 'hidden';
       this.slides = document.querySelectorAll(this.rootSelector + '>div');
@@ -189,6 +216,64 @@ var slides = {
       this.initSlides();
       if (callback) callback();
     }.bind(this);
+
+    var initMarkdown = function() {
+      marked.setOptions({
+        smartypants: true,
+      });
+      Array.prototype.forEach.call(document.querySelectorAll(this.rootSelector + '>div'), function(slide) {
+        l = slide.innerHTML.split('\n');
+        var i;
+        for (i = 0; i < l.length; i++) {
+          if (l[i].replace(' ', '').length > 0) {
+            indent = l[i].match(/^\s*/)[0].length;
+            break;
+          }
+        }
+        s = l.slice(i).join('\n');
+        // Strip indent number of white-spaces at beginning of line, but don't go so far to start cutting new-lines.
+        re = new RegExp('^(?!\\n)\\s{'+ indent + '}', 'mg');
+        s = s.replace(re, '').replace(/\\/g, '\\\\');
+        slide.innerHTML = marked(s);
+      });
+    }.bind(this);
+
+    var initMathJax = function() {
+      MathJax.Hub.Config({
+        messageStyle: "none",
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        "HTML-CSS": {
+          // showMathMenu: false,
+          // scale: 90,
+          availableFonts: ["TeX"]
+        },
+      });
+      MathJax.Hub.Queue(function () {
+        innerInit();
+      });
+      MathJax.Hub.Configured();
+    };
+
+    var wrapper = function() {
+      if (typeof marked !== 'undefined') {
+        initMarkdown();
+        if (typeof MathJax !== 'undefined') {
+          initMathJax();
+        } else {
+          innerInit();
+        }
+      } else if (typeof MathJax !== 'undefined') {
+        initMathJax();
+      } else {
+        innerInit();
+      }
+    };
+
     if (document.readyState === 'complete') {
       wrapper();
     } else {
