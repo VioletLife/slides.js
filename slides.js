@@ -67,7 +67,9 @@ var slides = {
     var prevSlide = this.currentSlide;
     this.currentSlideNumber = n;
     this.currentSlide = this.slides[n-1];
-    window.location.hash = n;
+    if (history.replaceState) {
+      history.replaceState(null, null, '#' + n);
+    }
     this.transitionToSlide(prevSlide, this.currentSlide, prevSlideNumber,this.currentSlideNumber);
     // If going backwards, make sure all fragments are visible.
     if (this.currentSlideNumber < prevSlideNumber) {
