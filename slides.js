@@ -135,7 +135,7 @@ var slides = {
       } else if (e.keyCode === 34 || e.keyCode === 39 || e.keyCode === 32 || e.keyCode === 13) {
         e.preventDefault();
         this.next();
-      } else if (e.keyCode === 80) { // f
+      } else if (e.keyCode === 70) { // f
         e.preventDefault();
         this.goFullScreen();
       } else if (e.keyCode === 67) { // c
