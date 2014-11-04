@@ -1,3 +1,3 @@
-# slide.js
+# slides.js
 
-[Example](https://viktorqvarfordt.github.io/slides.js/demo.html) with [code](https://github.com/ViktorQvarfordt/slides.js/tree/gh-pages).
+[Demo](https://viktorqvarfordt.github.io/slides.js/demo.html) with [code](https://github.com/ViktorQvarfordt/slides.js/tree/gh-pages).
