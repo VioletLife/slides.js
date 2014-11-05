@@ -23,6 +23,23 @@ h1 {
   background: #fff;
 }
 
+
+/* Fragments
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.fragment {
+  transition: opacity .5s;
+  opacity: 0;
+}
+
+.fragment.visible {
+  opacity: 1;
+}
+
+
+/* Code styling
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 code {
   font-family: 'Ubuntu Mono', monospace;
   padding: 0 5px
@@ -44,19 +61,6 @@ pre {
 }
 
 
-/* Fragments
- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-.fragment {
-  transition: opacity .5s;
-  opacity: 0;
-}
-
-.fragment.visible {
-  opacity: 1;
-}
-
-
 /* Print
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -73,6 +77,8 @@ pre {
     max-width: none !important;
     width: auto !important;
     transform: none !important;
+    transition: none !important;
+    overflow: auto !important;
   }
 
   .slides>div {
@@ -81,6 +87,11 @@ pre {
 
   .status {
     display: none !important;
+  }
+
+  .fragment {
+    transition: none !important;
+    opacity: 1 !important;
   }
 
 }
