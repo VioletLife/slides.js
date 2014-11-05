@@ -118,10 +118,7 @@ var slides = {
   },
   initEvents: function() {
     window.addEventListener('resize', function() {
-      setTimeout(function() {
-        // Hidden in timeout to not interfere with printing.
-        this.initSlides();
-      }, 0);
+      this.initSlides();
     }.bind(this));
     window.addEventListener('hashchange', function() {
       var hashNumber = parseInt(window.location.hash.substr(1));
